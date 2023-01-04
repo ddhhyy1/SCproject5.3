@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.studycafe.prac.dao.MemberDao;
 import com.studycafe.prac.dao.TodayTicketDao;
+import com.studycafe.prac.dto.ScSalesDto;
 import com.studycafe.prac.dto.ScreservDto;
 import com.studycafe.prac.dto.memberDto;
 import com.studycafe.prac.dto.seatDto;
@@ -185,6 +186,9 @@ public class TodayTicketController {
 		String ticketName = request.getParameter("ticketName");
 		String selectedDate = request.getParameter("selectedDate");
 		String [] selectedTime = request.getParameterValues("selectedTime");
+		for(int i=0;i<selectedTime.length;i++) {
+			System.out.println(selectedTime[i]);
+			}
 		
 		//넘어온 체크박스값 정렬 후, 첫번째 값부터 마지막값까지 추출후 새 배열에 넣음
 		Arrays.sort(selectedTime);
@@ -194,6 +198,7 @@ public class TodayTicketController {
 		String number=selectedTime[i];
 		selectedTimes[i]=number;
 		}
+		
 		
 		int intticketName= Integer.parseInt(ticketName);//ticketname을 int로 변환 체크박스 갯수를 알아내기위해
 			
@@ -273,8 +278,8 @@ public class TodayTicketController {
 	public String todayPay(HttpServletRequest request,HttpServletResponse response,Model model
 			,HttpSession session) {
 
-		TodayTicketDao dao = sqlSession.getMapper(TodayTicketDao.class);
-		MemberDao dao2 = sqlSession.getMapper(MemberDao.class);
+		TodayTicketDao tdao = sqlSession.getMapper(TodayTicketDao.class);
+		MemberDao mdao = sqlSession.getMapper(MemberDao.class);
 		String sessionId = (String) session.getAttribute("userId");
 		memberDto dto=new memberDto();
 		seatDto seatdto=new seatDto();
@@ -297,9 +302,13 @@ public class TodayTicketController {
 				String number=selectedTime[i];
 				selectedTimes[i]=number;
 				}
+				for(i=0;i<selectedTimes.length;i++) {
+				System.out.println(selectedTimes[i]);
+				}
+				
 				
 				//userpoint를 받아옴
-				memberDto userP = dao2.getMemberInfo(sessionId);
+				memberDto userP = mdao.getMemberInfo(sessionId);
 				String UserP = userP.getUserPoint();
 				
 				int intUserP= Integer.parseInt(UserP);
@@ -311,13 +320,17 @@ public class TodayTicketController {
 					int intUserP2=intUserP-intPayingPoint;
 					String UserPoAfterPaying=String.valueOf(intUserP2);
 				
-
-					dao2.updateUticketPoint(sessionId, UserPoAfterPaying, ticketName);
-					dao.regist(seatNo, sessionId, ticketName, selectedDate,startTime,endTime);//정보들을 scseatTbl에 먼저저장
-						for(int n=1;n<=selectedTime.length;n++) {//ST[i]배열의 값을 각각 체크박스 갯수만큼 데이타베이스(선택시간)에 넣음 
-							dao.makeReservation(seatNo, sessionId, selectedDate, selectedTimes[n-1]);//예약테이블에 체크박스 횟수만큼 저장
+					tdao.addSalesInfo(sessionId, newPayingPoint);//매출 테이블에 등록
+					mdao.updateUticketPoint(sessionId, UserPoAfterPaying, ticketName);//결제후 회원포인트와 이용권이름 갱신
+					List<ScSalesDto> salesDto = tdao.getSalesNo(sessionId);//매출 테이블의 해당아이디의 최신 결제 번호
+					int intSalesNo = salesDto.get(0).getSalesNo();
+					String salesNo = Integer.toString(intSalesNo);
+					
+					tdao.regist(seatNo, sessionId, ticketName, selectedDate,startTime,endTime,salesNo);//정보들을 scseatTbl에 먼저저장
+						for(int n=0;n<selectedTime.length;n++) {//ST[i]배열의 값을 각각 체크박스 갯수만큼 데이타베이스(선택시간)에 넣음 
+							tdao.makeReservation(seatNo, sessionId, selectedDate, selectedTimes[n]);//예약테이블에 체크박스 횟수만큼 저장
 							}
-					dao.addSalesInfo(sessionId, newPayingPoint);
+					
 						return "Ticket/todayPayOk";
 				
 				}

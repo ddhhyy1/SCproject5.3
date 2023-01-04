@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.studycafe.prac.dao.MemberDao;
 import com.studycafe.prac.dao.TodayTicketDao;
+import com.studycafe.prac.dto.ScSalesDto;
 import com.studycafe.prac.dto.ScreservDto;
 import com.studycafe.prac.dto.SubscriptionTicketDto;
 import com.studycafe.prac.dto.memberDto;
@@ -73,10 +74,44 @@ public class SubcriptionTicketController {
 		return "Ticket/SubscriptionTicketBuy";
 	}
 	@RequestMapping(value="/SubscriptionTicketView")//구독이용권좌석선택
-	public String STicketView(HttpSession session) {
+	public String STicketView(HttpSession session,HttpServletResponse response) {
 		
 		String sessionId = (String) session.getAttribute("userId");
-		
+		TodayTicketDao dao = sqlSession.getMapper(TodayTicketDao.class);
+
+		if(sessionId == null) {
+			try {
+				response.setContentType("text/html; charset=UTF-8");      
+		        PrintWriter out;
+				out = response.getWriter();
+				out.println("<script>alert('로그인이 필요한 서비스입니다.'); history.go(-1);</script>");
+			    out.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			}
+		if(sessionId!= null) {
+			
+			int subCount= dao.getSubscrCount(sessionId);
+			
+				if(subCount == 1) {
+					return "Ticket/SubscriptionTicketView";
+					} else {
+						try {
+							
+							response.setContentType("text/html; charset=UTF-8");      
+							PrintWriter out;
+							out = response.getWriter();
+							out.println("<script>alert('시간권을 먼저 구매해주세요.'); history.go(-1);</script>");
+							out.flush();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+				}	
 		
 		
 		return "Ticket/SubscriptionTicketView";
@@ -226,7 +261,7 @@ public class SubcriptionTicketController {
 	@RequestMapping(value="/sTicketReservComplete")
 	public String sTicketReservComplete(HttpServletRequest request,HttpServletResponse response,Model model
 			,HttpSession session) {
-		TodayTicketDao dao = sqlSession.getMapper(TodayTicketDao.class);
+		TodayTicketDao tdao = sqlSession.getMapper(TodayTicketDao.class);
 		
 		String sessionId = (String) session.getAttribute("userId");
 		String selectedDate = request.getParameter("selectedDate");
@@ -262,10 +297,15 @@ public class SubcriptionTicketController {
 			} 
 		}	else {//보유시간이 예약시간보다 많을 경우 예약가능
 			String sticketName = String.valueOf(bticketName);
-			dao.regist(seatNo, sessionId, sticketName, selectedDate,startTime,endTime);
-			dao.updateRemainTime(sessionId, remainTime);
+			
+			List<ScSalesDto> salesDto = tdao.getSalesNo(sessionId);//매출 테이블의 해당 아이디로 된 가장 최신매출건의 번호 가져오기 
+			int intSalesNo = salesDto.get(0).getSalesNo();
+			String salesNo = Integer.toString(intSalesNo);
+			
+			tdao.regist(seatNo, sessionId, sticketName, selectedDate,startTime,endTime,salesNo);
+			tdao.updateRemainTime(sessionId, remainTime);
 				for(int n=1;n<=selectedTime.length;n++) {//ST[i]배열의 값을 각각 체크박스 갯수만큼 데이타베이스(선택시간)에 넣음 
-					dao.makeReservation(seatNo, sessionId, selectedDate, selectedTimes[n-1]);
+					tdao.makeReservation(seatNo, sessionId, selectedDate, selectedTimes[n-1]);
 				}
 	
 			
@@ -277,34 +317,7 @@ public class SubcriptionTicketController {
 		return "Ticket/sTicketReservComplete";
 	}
 	
-	@RequestMapping(value="/checkReservInfo")
-	public String checkReservInfo(Model model,HttpSession session) {
-		
-		String sessionId = (String) session.getAttribute("userId");
-		
-		MemberDao mdao = sqlSession.getMapper(MemberDao.class);
-		TodayTicketDao tdao = sqlSession.getMapper(TodayTicketDao.class);
-		
-		memberDto memberDto = mdao.getMemberInfo(sessionId);
-		SubscriptionTicketDto stDto = tdao.getSTicketInfo(sessionId);
-		seatDto sDto = tdao.getReservInfo(sessionId);
-		
-		String selectedDate = sDto.getSelectedDate();
-		
-		String year= selectedDate.substring(0, 4);
-		String month= selectedDate.substring(4, 6);
-		String day= selectedDate.substring(6, 8);
-		
-		model.addAttribute("day",day);
-		model.addAttribute("month",month);
-		model.addAttribute("year",year);
-		model.addAttribute("memberDto", memberDto);
-		model.addAttribute("stDto", stDto);
-		model.addAttribute("sDto",sDto);
-		
-		
-		return "Ticket/checkReservInfo";
-	}
+	
 	
 	
 }

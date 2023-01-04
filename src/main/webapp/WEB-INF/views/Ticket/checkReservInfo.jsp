@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -42,17 +44,35 @@
 									</tr>
 									<tr>
 										<td><span class="content_text01">아 이 디 : </span></td>
-										<td><%= sessionId %></td>
-									
-							
+										<td><%= sessionId %></td>		
 									<tr>
 										<td><span class="content_text01">보유 포인트 : </span></td>
 										<td>${memberDto.userPoint}</td>
 									</tr>
-									<tr>
-										<td><span class="content_text01">사용중인 시간권 : </span></td>
-										<td>${memberDto.usingTicket}</td>
-									</tr>
+									<!-- 사용중인 상품에 없거나 어떤 상품이냐에 따라 표시가 다름 -->
+									<c:choose>
+											<c:when test="${memberDto.usingTicket==0}">
+												<tr>
+													<td><span class="content_text01">사용중인 상품 : </span></td>
+													<td> 사용중인 상품이 없습니다.</td>
+												</tr>
+									
+											</c:when>
+											<c:when test="${memberDto.usingTicket>0 and memberDto.usingTicket<10}">
+												<tr>
+													<td><span class="content_text01">사용중인 상품 : </span></td>
+													<td> 당일권 ${memberDto.usingTicket}시간 예약됨</td>
+												</tr>
+											</c:when>
+									 		<c:otherwise>
+									 			<tr>
+													<td><span class="content_text01">사용중인 상품 : </span></td>
+													<td>시간권 ${memberDto.usingTicket}시간제 사용중</td>
+												</tr>
+									
+									 		</c:otherwise>
+									</c:choose>
+									
 									<tr>
 										<td><span class="content_text01">남아있는 시간 : </span></td>
 										<td>${stDto.sremainTime}</td>
@@ -62,32 +82,48 @@
 									<hr>
 									</td>
 									</tr>
-									<tr>
-										<td><span class="content_text01">예약 번호: </span></td>
-										<td>${sDto.tempUsingNo}</td>
-									</tr>
-									<tr>
-										<td><span class="content_text01">예약중인 날짜: </span></td>
-										<td>${year}년${month}월${day}일</td>
-									</tr>
-									<tr>
-										<td><span class="content_text01">예약중인 좌석: </span></td>
-										<td>${sDto.seatNo}번좌석</td>
-									</tr>
-									<tr>
-										<td><span class="content_text01">예약 시간: </span></td>
-										<td>${sDto.startTime}:00 ~ ${sDto.endTime}:00</td>
-									</tr>
 									
-									<tr>
-										<td colspan="2">
-											<input class="button_type01" type="button" value="정보 수정" onclick="script:window.location='memberModify'">
-										</td>
-									</tr>
-							
+									<c:choose>
+											<c:when test="${sDto==null}">
+												<tr>
+													<td colspan="2"><span class="content_text01">예약된 좌석없음</span></td>
+												</tr>
+												<tr>
+												<td colspan="2"> 사용중인 상품이 없습니다.</td>
+												</tr>
+											</c:when>
+											<c:otherwise>
+												<tr>
+													<td><span class="content_text01">예약 번호: </span></td>
+													<td>${sDto.tempUsingNo}</td>
+												</tr>
+												<tr>
+													<td><span class="content_text01">예약중인 날짜: </span></td>
+													<td>${year}년${month}월${day}일</td>
+												</tr>
+												<tr>
+													<td><span class="content_text01">예약중인 좌석: </span></td>
+													<td>${sDto.seatNo}번좌석</td>
+												</tr>
+												<tr>
+													<td><span class="content_text01">예약 시간: </span></td>
+													<td>${sDto.startTime}:00 ~ ${sDto.endTime}:00</td>
+												</tr>
+													
+											
+												<tr>
+													<td>
+														<input class="button_type01" type="button" value="예약 취소" onclick="script:window.location='cancelReserv?tempUsingNo=${sDto.tempUsingNo}&seatNo=${sDto.seatNo}&selectedDate=${selectedDate}'">
+													</td>
+													<td>
+														<input class="button_type01" type="button" value="좌석 변경" onclick="script:window.location='memberModify'">	
+													</td>
+												</tr>
+												</c:otherwise>
+									</c:choose>
 		
 		</table>
-		</form>
+		
 		</center>
 		</td>
 		</tr>

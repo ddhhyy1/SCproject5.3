@@ -7,9 +7,10 @@
 <mapper namespace="com.studycafe.prac.dao.TodayTicketDao">
 
 	<!-- 당일 이용권 관련  -->
+	
 	<insert id="regist">
-		INSERT INTO scseatTBL(seatNo, userId, ticketName, selectedDate, TEMPUSINGNO, startTime, endTime )
-		 VALUES(#{param1}, #{param2}, #{param3}, #{param4},TEMPUN_seq.nextval, #{param5},#{param6}) 
+		INSERT INTO scseatTBL(seatNo, userId, ticketName, selectedDate, TEMPUSINGNO, startTime, endTime, salesNo)
+		 VALUES(#{param1}, #{param2}, #{param3}, #{param4},TEMPUN_seq.nextval, #{param5},#{param6},#{param7}) 
 	</insert>
 
 
@@ -54,6 +55,11 @@
 		UPDATE SCMEMBERTBL SET USERPOINT =#{param2}, USINGTICKET =#{param3} WHERE USERID=#{param1}
 	</update>
 	
+	<select id="getSubscrCount" resultType="int">
+		SELECT COUNT(*) FROM SUBSCRIPTIONTBL WHERE SUSERID=#{param1}
+	
+	</select>
+	
 	<!-- 시간 이용권 끝 -->
 	
 	<!-- 관리자 및 매출관련 -->
@@ -64,16 +70,38 @@
 	</insert>
 	
 	<select id="getChartInfo" resultType="com.studycafe.prac.dto.ScSalesDto">
-	SELECT SUM(PRICE) AS sumSales FROM scsalestbl
-	GROUP BY substr(salesdate,1,7)
-	order By substr(salesdate,1,7) asc
+		SELECT SUM(PRICE) AS sumSales FROM scsalestbl
+		GROUP BY substr(salesdate,1,7)
+		order By substr(salesdate,1,7) asc
 	</select>
+	
+	<select id="getSalesNo" resultType="com.studycafe.prac.dto.ScSalesDto">
+		select * from scsalestbl 
+		WHERE userId = #{param1}
+		order by salesDate DESC
+	</select>
+	
+	<delete id="cancelReservSaleTbl">
+		DELETE FROM SCSALESTBL WHERE SALESNO = #{param1}
+		
+	</delete>
 	
 	<!-- 내 예약정보확인 관련 -->
 	
 	<select id="getReservInfo" resultType="com.studycafe.prac.dto.seatDto">
 		SELECT * FROM SCSEATTBL WHERE userId = #{param1}
-	
 	</select>
+	
+	<delete id="cancelReservSeatTbl">
+		DELETE FROM SCSEATTBL WHERE TEMPUSINGNO = #{param1}
+	</delete>
+	
+	<delete id="cancelReservResvTbl">
+		DELETE FROM SCRESERVTBL WHERE userId = #{param1} and seatNo = #{param2} and selectedDate=#{param3}
+	</delete>
+	
+	<update id="returnUserPointTicket">
+		UPDATE SCMEMBERTBL SET USERPOINT =#{param2}, USINGTICKET =#{param3} WHERE USERID=#{param1}
+	</update>
 	
 </mapper>
