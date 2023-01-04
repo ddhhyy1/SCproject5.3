@@ -6,10 +6,16 @@ tr.contentbox {
 	border-collapse: collapse;
   	border-radius: 20px;
 }
-table{
 
-  border-collapse: collapse;
+
+table{
+	border-collapse: collapse;
+	border-radius: 10px;
+  	border-style: hidden;
+  	box-shadow: 0 0 0 1px #000;
 }
+
+
 
 td.content {
 	font-family: malgun;

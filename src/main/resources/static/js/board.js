@@ -16,3 +16,4 @@ function boardCheck() {
    
    document.board_frm.submit();
 } 
+ 

@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>    
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -36,6 +36,7 @@
 		<tr>
 			<td>
 				<center>
+				<div class = "c">
 				<table width="80%" border="0" cellspacing="0" cellpadding="10">
 					<tr class="board_contentbox">
 						<td class="content">
@@ -53,6 +54,7 @@
 									<td class="board_content01">${qdto.bnum }</td>
 									<td class="board_content02">
 									<a href="questionView?bnum=${qdto.bnum }">
+									 
 									<c:choose>
 										<c:when test="${fn:length(qdto.btitle) > 23 }">
 											<c:out value="${fn:substring(qdto.btitle,0,22) }"></c:out>...
@@ -61,6 +63,9 @@
 											<c:out value="${qdto.btitle }"></c:out>
 										</c:otherwise>
 									</c:choose>
+									<c:if test="${qdto.rcount != 0 }">              
+              						&nbsp;&nbsp;[${qdto.rcount }]
+              						</c:if>
 									</a>
 									</td>
 									<td class="board_content01">${qdto.buserid }</td>
@@ -102,6 +107,7 @@
 					</tr>
 					
 				</table>
+				</div>
 				</center>			
 			</td>
 		</tr>

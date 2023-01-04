@@ -13,7 +13,7 @@ public class BoardDto {
 	private String btitle;
 	private String bcontent;
 	private String buserid;//글쓴이의 아이디
+	private int rcount;//첨부된 댓글 개수
 	private String bdate;
-	
 	
 }

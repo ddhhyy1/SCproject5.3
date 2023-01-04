@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/content.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/login.css">
 <script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/board.js"></script>
+
 <title>내 질문</title>
 </head>
 <body>	
@@ -83,18 +84,58 @@
 										%>
 										</td>
 									</tr>
-								</form>							
-							</table>
-							</center>							
-						</td>						
-					</tr>
-					
-				</table>
-				</center>			
+								</form>
+								</table>
+								</center>
+								
+	<center>	
+		
+       
+        
+		<table border="1" cellpadding="0" cellspacing="0" width="750">
+        	<c:forEach items="${replylist }" var="replyDtoa">
+        	<tr>
+        		
+        		<td width=550>
+        			${replyDtoa.rcontent }<br><br>
+        			
+        		</td>
+        		<td>
+        			<a href="replyDelete?rnum=${replyDtoa.rnum }&bnum=${qdto.bnum }">삭제</a>
+        		</td>
+        		
+        	</tr>
+        	</c:forEach>
+        	</table>
+        	
+        
+        <table>
+        	<form action="replyOk" method="post">
+        <input type="hidden" name="bnum" value="${qdto.bnum }">
+									<tr>
+										<td><span class="content_text01">댓글 : </span></td>
+										<td><textarea class="textarea_type01" rows="10" cols="30" name="rcontent"></textarea></td>
+									</tr>	
+									<tr>
+										<td colspan="2">
+											
+											<button type="submit" class="btn btn-primary btn-lg">댓글등록</button>
+										</td>
+									</tr>
+						
+									</table>
+									</form>
+			</center>
+			
+			
 			</td>
-		</tr>
-	</table>
-	</center>
+								</tr>
+								</table>
+								</center>
+								</td>
+								</tr>
+								</table>
+								</center>
 	<%@ include file="include/footer.jsp" %>
 </body>
 </html>

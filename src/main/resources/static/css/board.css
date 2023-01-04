@@ -1,8 +1,7 @@
 @charset "UTF-8";
 
 th.board_title{
-	background-color : #F8EDE3;
-	border : 1px solid #B33030;
+	background-color : #c9c9c9;
 	font-size : 20xp;
 	color: #2a2a2a;
 	font-family:malgun;
@@ -11,19 +10,20 @@ th.board_title{
 
 td.board_content01{
 	background-color : #F8F4EA;
-	border : 1px solid #B33030;
+	border-bottom:1px solid silver;
 	font-size : 20xp;
-	color: #000000;
+	color: #3A3845;
 	font-family:malgun;
 	text-align:center;
 }
 
 td.board_content02{
 	background-color : #F8F4EA;
-	border : 1px solid #B33030;
+	border-bottom:1px solid silver;
 	font-size : 20xp;
 	color: #000000;
 	font-family:malgun;
 	font-weight: bold;
 	text-align:left;
 }
+

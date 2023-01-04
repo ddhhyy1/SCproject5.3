@@ -26,13 +26,13 @@ public class PageDto {
 		this.cri = cri;
 		this.total = total;
 		
-		this.endPage= (int)Math.ceil((cri.getPageNum()/5.0)) * 5;//math.ceil -> 올림함수
+		this.endPage= (int)Math.ceil((cri.getPageNum()/8.0)) * 8;//math.ceil -> 올림함수
 		// 총 57개글 존재한다고 했을때
 		//1 2 3 4 5 next
 		// prev 6 7 8 9 10 next
 		// prev 11 12 
 		//즉 Math.ceil((cri.getPageNum()/5.0))에서 5.0은 밑에 보여질 페이지가 5개인걸로 한정하겠다는 것.
-		this.startPage = this.endPage - 4;
+		this.startPage = this.endPage - 7;
 		int realEnd = (int) Math.ceil(total*1.0/cri.getAmount()); //이렇게 하면 amount초기값을 바꿀때마다 같이 바뀐다.
 		//total은 정수 amount도 정수이다 정수/정수 해버리면 정수가 나와버리기 때문에 올림을 해도 수가 1 늘어나지 않는다.
 		//고로 실수/정수 로 바꾸기 위해 total에 1.0을 곱해준것

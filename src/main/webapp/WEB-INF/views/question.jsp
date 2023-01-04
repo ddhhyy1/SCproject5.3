@@ -33,7 +33,7 @@
 								<form action="questionOk" method="post" name="board_frm">
 								
 									<tr>
-										<td colspan="2" align="center" class="content_text01">
+										<td colspan="2" align="center" class="content_text01" >
 										질문하기 
 										</td>
 									</tr>
@@ -54,7 +54,7 @@
 									
 									<tr>
 										<td><span class="content_text01">질문내용 : </span></td>
-										<td><textarea class="textarea_type01" rows="10" cols="30" name="bcontent"></textarea></td>
+										<td><textarea class="textarea_type01" rows="10" cols="30" name="bcontent"placeholder="질문하"></textarea></td>
 									</tr>									
 									
 									

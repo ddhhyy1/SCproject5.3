@@ -9,7 +9,10 @@
 	<!-- 게시판 SQL -->
 	
 	<insert id="writeQuestion">
-		INSERT INTO scboardtbl(bnum ,btitle, bcontent, buserid, rcount) VALUES(scboard_seq.nextval, #{param1}, #{param2}, #{param3}, 0) 
+		INSERT INTO 
+			scboardtbl(bnum ,btitle, bcontent, buserid, rcount) 
+		VALUES
+			(scboard_seq.nextval, #{param1}, #{param2}, #{param3}, 0) 
 	</insert>
 	
 	<select id="questionList" resultType="com.studycafe.prac.dto.BoardDto">
@@ -23,6 +26,10 @@
 	<select id="questionView" resultType="com.studycafe.prac.dto.BoardDto">
 		SELECT * FROM scboardtbl WHERE bnum=#{param1}
 	</select>	
+	
+	<select id="rfboardView" resultType="com.studycafe.prac.dto.BoardDto">
+		SELECT * FROM scboardtbl WHERE bnum=#{param1}
+	</select>
 	
 	<update id="questionModify">
 		UPDATE scboardtbl SET btitle=#{param2}, bcontent=#{param3}, buserid=#{param4} WHERE bnum=#{param1}
@@ -39,20 +46,20 @@
 	<!-- 게시판 댓글 관련 SQL -->
 	
 	<insert id="rwrite">
-		INSERT INTO screply(rnum, rorinum, rid, rcontent) 
-		VALUES (screply_seq.nextval, #{param1}, #{param2}, #{param3})
+		INSERT INTO screplytbl(rnum, rorinum, rid, rcontent) 
+		VALUES (screply_seq.nextval, #{param1}, #{param2}, #{param3 ,jdbcType=VARCHAR })
 	</insert>
 	
 	<select id="rlist" resultType="com.studycafe.prac.dto.replyDto">
-		SELECT * FROM screply WHERE rorinum=#{param1}
+		SELECT * FROM screplytbl WHERE rorinum=#{param1}
 	</select>
 	
 	<update id="brcount">
-		UPDATE scboardtbl SET rcount=rcount+1 WHERE bnum=#{param1}
+		UPDATE scboardtbl SET rcount=rcount+1 WHERE bnum=#{param1 }
 	</update>
 	
 	<delete id="rdelete">
-		DELETE FROM screply WHERE rnum=#{param1}
+		DELETE FROM screplytbl WHERE rnum=#{param1}
 	</delete>
 	
 	<update id="brcountMinus">
